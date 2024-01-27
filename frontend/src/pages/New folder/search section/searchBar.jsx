@@ -151,21 +151,48 @@ const SearchBar = () => {
     const [showResultsModal, setShowResultsModal] = useState(false);
     const [selectedResult, setSelectedResult] = useState(null);
     const [showDetailsModal, setShowDetailsModal] = useState(false);
-    const [selectedLanguage, setSelctedLanguage] = useState('')
-    const [selectedCity, setSelctedCity] = useState('')
-    const [selectedRating, setSelectedRating] = useState(0);
+    const [selectedLanguage, setSelctedLanguage] = useState('arabic');
+    const [selectedCity, setSelctedCity] = useState('Bejaia');
+    const [selectedSpecialty, setSelectedSpecialty] = useState('divorce')
+    const [selectedRating, setSelectedRating] = useState(5);
+    
+    
+    const emailAddress = 'example@example.com';
 
 
-    const handleSearch = (e) => {
+    //const handleSearch = (e) => {
 
-      console.log(`Searching for: ${searchTerm}`);
-      setSearchTerm('');
-      const results=initialSearchResultsStructure
-      setSearchResults(results)
-      setShowModal(false);
-      setShowResultsModal(true);
+      //console.log(`Searching for: ${searchTerm}`);
+      //setSearchTerm('');
+      //const results=initialSearchResultsStructure
+      //setSearchResults(results)
+      //setShowModal(false);
+      //setShowResultsModal(true);
+    //};
+
+    const handleSearch = async () => {
+      try {
+        // Build the API endpoint with query parameters
+        const apiUrl = `http://127.0.0.1:8000/api/recherche/?specialite=${selectedSpecialty}&langue=${selectedLanguage}&Adresse=${selectedCity}`;
+        
+        // Make the API request
+        const response = await fetch(apiUrl);
+        
+        // Check if the request was successful (status code 2xx)
+        if (response.ok) {
+          const data = await response.json();
+          setSearchResults(data);
+          setShowModal(false);
+          setShowResultsModal(true);
+        } else {
+          // Handle error cases here
+          console.error('Error fetching data:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
     };
-
+ 
 
     const handleKeyPress = (e) => {
       if (e.key === 'Enter') {
@@ -196,6 +223,11 @@ const SearchBar = () => {
     const handleSelectedCity=(event) =>{
       setSelctedCity(event.target.value);
     }
+
+    const handleSelectedSpecialty=(event) =>{
+      setSelectedSpecialty(event.target.value);
+    }
+    
     
 
     const handleSelectRating = (e) => {
@@ -244,7 +276,6 @@ const SearchBar = () => {
             <label style={{color:'black'}}>
                 Language:
                 <select name="language" value={selectedLanguage} onChange={handleSelectedLanguage}>
-                  <option value="any">Any</option>
                   <option value="english">English</option>
                   <option value="french">French</option>
                   <option value="arabic">Arabic</option>
@@ -254,7 +285,7 @@ const SearchBar = () => {
             <label style={{color:'black'}}>
                 city:
                 <select name="city" menuPlacement="bottom" value={selectedCity} onChange={handleSelectedCity}>
-                  <option value="Any">Any</option>
+
                   <option value="Adrar">Adrar </option>
                   <option value="Chlef">Chlef</option>
                   <option value="Laghouat">Laghouat</option>
@@ -315,6 +346,13 @@ const SearchBar = () => {
                   <option value="El Meniaa">El Meniaa</option>  
                 </select>
             </label>
+
+            <label style={{color:'black'}}>
+                Specialty:
+                <select name="Specialty" value={selectedSpecialty} onChange={handleSelectedSpecialty}>
+
+                </select>
+            </label>
             
           </div>
         </div>
@@ -370,7 +408,7 @@ const SearchBar = () => {
               </label>
               <button type="submit" onClick={handleSubmitRating}>Submit</button>
               </p>
-              <button style={{position:'absolute', bottom:'10px', right:'10px'}} onClick={() => {setShowDetailsModal(false);}}>Take an appointment</button>
+              <link to={`/appointment?email=${encodeURIComponent(emailAddress)}`}><button style={{position:'absolute', bottom:'10px', right:'10px'}} onClick={() => {setShowDetailsModal(false);}}>Take an appointment</button></link>
             </div>
         </>
       )}
